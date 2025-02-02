@@ -1,13 +1,17 @@
 <?php
 
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ForecastingController;
+use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DashboardController;
 
-// Add these routes
+// Authentication Routes
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
@@ -24,3 +28,16 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
     ->name('password.reset');
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])
     ->name('password.update');
+
+// Dashboard Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
+    Route::get('/transactions/income', [TransactionController::class, 'income'])->name('transactions.income');
+    Route::get('/transactions/expense', [TransactionController::class, 'expense'])->name('transactions.expense');
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::get('/budget', [BudgetController::class, 'index'])->name('budget');
+    Route::get('/forecasting', [ForecastingController::class, 'index'])->name('forecasting');
+    Route::get('/reports', [ReportsController::class, 'index'])->name('reports');
+});

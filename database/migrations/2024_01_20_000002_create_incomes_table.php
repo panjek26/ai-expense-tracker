@@ -8,21 +8,20 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('incomes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('category_id')->constrained();
-            $table->decimal('amount', 10, 2);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('income_category_id')->constrained()->onDelete('restrict');
+            $table->decimal('amount', 15, 2);
             $table->string('description');
+            $table->text('notes')->nullable();
             $table->date('transaction_date');
-            $table->string('type')->default('expense');
-            $table->string('receipt_image')->nullable();
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('incomes');
     }
 };

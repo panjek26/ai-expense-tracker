@@ -45,4 +45,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // Add this method inside the User class
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+    public function incomes()
+        {
+            return $this->hasMany(Income::class);
+        }
 }
