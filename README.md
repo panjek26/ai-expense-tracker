@@ -21,7 +21,7 @@ A Laravel-based expense tracking application that helps you manage your personal
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/ai-expense-tracker.git
+   git clone https://github.com/panjek26/ai-expense-tracker.git
    cd ai-expense-tracker
    ```
 
@@ -70,7 +70,7 @@ A Laravel-based expense tracking application that helps you manage your personal
    php artisan serve
    ```
 
-10. **Visit** `http://localhost:8000` **in your browser.**
+10. **Visit** `http://localhost:8000/login` **in your browser.**
 
 ## Usage
 - Register a new account
