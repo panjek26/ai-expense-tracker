@@ -1,5 +1,7 @@
 # AI Expense Tracker
 
+![Laravel Logo](https://laravel.com/img/logomark.min.svg)
+
 A Laravel-based expense tracking application that helps you manage your personal finances.
 
 ## Features
@@ -77,3 +79,4 @@ A Laravel-based expense tracking application that helps you manage your personal
 - Add new expense transactions
 - View your transaction history
 - Monitor your financial overview in the dashboard
+
