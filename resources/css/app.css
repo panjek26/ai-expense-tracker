@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.login-container {
+    @apply min-h-screen bg-teal-600 flex items-center justify-center p-4;
+}
+
+.login-card {
+    @apply bg-white rounded-lg shadow-lg w-full max-w-md p-8;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-gray-600 mb-1;
+}
+
+.form-input {
+    @apply block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-md
+    focus:outline-none focus:ring-0 focus:border-teal-500 
+    placeholder:text-gray-400 placeholder:text-sm;
+}
+
+.btn-primary {
+    @apply w-full py-3 px-4 text-white text-sm font-medium bg-teal-600 
+    rounded-md hover:bg-teal-700 transition-colors duration-200
+    focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2;
+}
+
+.link {
+    @apply text-teal-600 hover:text-teal-700 transition-colors duration-200;
+}
+
+.checkbox-input {
+    @apply w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 rounded 
+    focus:ring-teal-500 focus:ring-2;
+}

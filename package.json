@@ -10,8 +10,13 @@
         "axios": "^1.7.4",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.2.0",
-        "postcss": "^8.4.47",
-        "tailwindcss": "^3.4.13",
+        "postcss": "^8.5.1",
+        "tailwindcss": "^3.4.17",
         "vite": "^6.0.11"
+    },
+    "dependencies": {
+        "@popperjs/core": "^2.11.8",
+        "bootstrap": "^5.3.3",
+        "bootstrap-icons": "^1.11.3"
     }
 }
