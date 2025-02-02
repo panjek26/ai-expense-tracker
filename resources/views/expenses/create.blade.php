@@ -30,22 +30,23 @@
             </div>
         </div>
 
-        <form id="expenseForm" action="{{ route('transactions.store') }}" method="POST" class="p-6 space-y-6">
+        <form id="expenseForm" action="{{ route('expenses.store') }}" method="POST" class="p-6 space-y-6">
             @csrf
-            <input type="hidden" name="type" value="expense">
             
             <!-- Amount Field -->
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                     <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-                    <div class="flex items-center">
-                        <span class="text-gray-500 mr-2">Rp</span>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <span class="text-gray-500 sm:text-sm font-medium">Rp</span>
+                        </div>
                         <input type="text" 
                                name="amount" 
                                id="amount" 
                                x-data
                                x-on:input="$el.value = $el.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
-                               class="block w-full px-4 py-2.5 rounded-md border-gray-300 focus:ring-red-500 focus:border-red-500 sm:text-sm" 
+                               class="block w-full rounded-md border-gray-300 pl-16 pr-4 py-2.5 focus:border-red-500 focus:ring-red-500 sm:text-sm text-right" 
                                placeholder="0"
                                required>
                     </div>

@@ -35,9 +35,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
     Route::get('/transactions/income', [TransactionController::class, 'income'])->name('transactions.income');
     Route::get('/transactions/expense', [TransactionController::class, 'expense'])->name('transactions.expense');
-    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
-    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::post('/transactions/store', [TransactionController::class, 'store'])->name('transactions.store');
+    
+    // Add Budget route
     Route::get('/budget', [BudgetController::class, 'index'])->name('budget');
     Route::get('/forecasting', [ForecastingController::class, 'index'])->name('forecasting');
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports');
+    Route::post('/budget', [BudgetController::class, 'store'])->name('budget.store');
 });
