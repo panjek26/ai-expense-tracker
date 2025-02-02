@@ -54,28 +54,35 @@ class BudgetController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'month' => 'required|integer|between:1,12',
             'year' => 'required|integer|min:2024',
-            'budgets' => 'required|array'
+            'budgets' => 'required|array',
+            'budgets.*' => 'nullable|string',
         ]);
-
-        $userId = auth()->id();
-
-        foreach ($validated['budgets'] as $category => $amount) {
-            $amount = str_replace('.', '', $amount);
-
+    
+        foreach ($request->budgets as $category => $amount) {
+            // Skip if amount is empty or only contains dots/commas
+            if (empty($amount) || $amount === '0') {
+                continue;
+            }
+    
+            // Clean the amount string (remove dots and convert to integer)
+            $cleanAmount = (int) str_replace('.', '', $amount);
+    
             Budget::updateOrCreate(
                 [
-                    'user_id' => $userId,
+                    'user_id' => auth()->id(),
                     'category' => $category,
-                    'month' => $validated['month'],
-                    'year' => $validated['year']
+                    'month' => $request->month,
+                    'year' => $request->year,
                 ],
-                ['amount' => $amount]
+                [
+                    'amount' => $cleanAmount
+                ]
             );
         }
-
-        return redirect()->route('budget')->with('success', 'Budget has been updated successfully!');
+    
+        return redirect()->back()->with('success', 'Budget has been saved successfully.');
     }
 }

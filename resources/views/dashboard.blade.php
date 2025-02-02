@@ -123,9 +123,9 @@
                             <li class="py-4 hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center space-x-4">
                                     <div class="flex-shrink-0">
-                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-full {{ $transaction instanceof \App\Models\Expense ? 'bg-red-100' : 'bg-green-100' }}">
-                                            <span class="{{ $transaction instanceof \App\Models\Expense ? 'text-red-600' : 'text-green-600' }} text-sm font-medium">
-                                                {{ $transaction instanceof \App\Models\Expense ? '-' : '+' }}
+                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-full {{ $transaction->type === 'expense' ? 'bg-red-100' : 'bg-green-100' }}">
+                                            <span class="{{ $transaction->type === 'expense' ? 'text-red-600' : 'text-green-600' }} text-sm font-medium">
+                                                {{ $transaction->type === 'expense' ? '-' : '+' }}
                                             </span>
                                         </span>
                                     </div>
@@ -134,8 +134,8 @@
                                         <p class="text-sm text-gray-500">{{ $transaction->transaction_date->format('d M Y') }}</p>
                                     </div>
                                     <div>
-                                        <span class="{{ $transaction instanceof \App\Models\Expense ? 'text-red-600' : 'text-green-600' }} text-sm font-semibold">
-                                            {{ $transaction instanceof \App\Models\Expense ? '-' : '+' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                        <span class="{{ $transaction->type === 'expense' ? 'text-red-600' : 'text-green-600' }} text-sm font-semibold">
+                                            {{ $transaction->type === 'expense' ? '-' : '+' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                         </span>
                                     </div>
                                 </div>
@@ -206,6 +206,39 @@
                                 </li>
                             @endforelse
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Financial Insights Section -->
+    <div class="mt-12 mb-8">
+        <div class="bg-white overflow-hidden shadow-sm rounded-xl">
+            <div class="p-8">
+                <div class="flex items-start space-x-6">
+                    <div class="flex-shrink-0">
+                        <div class="p-3 bg-teal-100 rounded-lg">
+                            <svg class="h-8 w-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">AI Financial Insights</h3>
+                        <div class="space-y-8">
+                            <div class="prose prose-lg max-w-none text-gray-600">
+                                {!! nl2br(e($aiRecommendations)) !!}
+                            </div>
+                            @if(isset($aiAnalysis))
+                                <div class="mt-8 pt-8 border-t border-gray-200">
+                                    <h4 class="text-xl font-semibold text-gray-900 mb-4">Detailed Analysis</h4>
+                                    <div class="prose prose-lg max-w-none text-gray-600">
+                                        {!! nl2br(e($aiAnalysis)) !!}
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

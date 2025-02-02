@@ -8,74 +8,124 @@ use App\Models\ExpenseCategory;
 use App\Models\IncomeCategory;
 use App\Models\Budget;
 use Illuminate\Support\Facades\DB;
+use App\Services\FinancialAnalysisService;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
+    protected $financialAnalysisService;
+
+    public function __construct(FinancialAnalysisService $financialAnalysisService)
+    {
+        $this->financialAnalysisService = $financialAnalysisService;
+    }
+
     public function index()
     {
         $userId = auth()->id();
-        $currentMonth = now();
-    
-        // Get total expenses
-        $totalExpenses = Expense::where('user_id', $userId)->sum('amount');
-    
-        // Get total income
-        $totalIncome = Income::where('user_id', $userId)->sum('amount');
-    
-        // Get total budget and count
-        $totalBudget = Budget::where('user_id', $userId)
-            ->where('month', $currentMonth->month)
-            ->where('year', $currentMonth->year)
+        $currentMonth = Carbon::now();
+
+        // Get current month data only
+        $totalIncome = Income::where('user_id', $userId)
+            ->whereYear('transaction_date', $currentMonth->year)
+            ->whereMonth('transaction_date', $currentMonth->month)
             ->sum('amount');
-        
-        $budgetCount = Budget::where('user_id', $userId)
+
+        $totalExpenses = Expense::where('user_id', $userId)
+            ->whereYear('transaction_date', $currentMonth->year)
+            ->whereMonth('transaction_date', $currentMonth->month)
+            ->sum('amount');
+
+        // Get current budgets and total budget
+        $currentBudgets = Budget::where('user_id', $userId)
             ->where('month', $currentMonth->month)
             ->where('year', $currentMonth->year)
-            ->count();
-    
-        // Calculate savings
-        $savings = $totalIncome - $totalExpenses;
+            ->pluck('amount', 'category')
+            ->toArray();
+            
+        $totalBudget = array_sum($currentBudgets);
+        $budgetCount = count($currentBudgets);
 
-        // Get expense categories count
-        $categoriesCount = ExpenseCategory::count();
+        // Get category expenses
+        $categoryExpenses = Expense::where('user_id', $userId)
+            ->whereYear('transaction_date', $currentMonth->year)
+            ->whereMonth('transaction_date', $currentMonth->month)
+            ->select('category', \DB::raw('sum(amount) as total'))
+            ->groupBy('category')
+            ->pluck('total', 'category')
+            ->toArray();
 
-        // Get recent transactions (both income and expenses)
-        $recentIncomes = Income::where('user_id', $userId)
-            ->select('id', 'description', 'amount', 'transaction_date')
-            ->get();
-        
-        $recentExpenses = Expense::where('user_id', $userId)
-            ->select('id', 'description', 'amount', 'transaction_date')
-            ->get();
-
-        $recentTransactions = $recentIncomes->concat($recentExpenses)
-            ->sortByDesc('transaction_date')
-            ->take(5);
-
-        // Get expense and income by categories
+        // Get expenses by categories
         $expensesByCategory = Expense::where('user_id', $userId)
-            ->select('category', DB::raw('sum(amount) as total'))
+            ->whereYear('transaction_date', $currentMonth->year)
+            ->whereMonth('transaction_date', $currentMonth->month)
+            ->select('category', \DB::raw('sum(amount) as total'))
             ->groupBy('category')
             ->get();
 
+        // Get income by categories
         $incomesByCategory = Income::where('user_id', $userId)
-            ->select('category', DB::raw('sum(amount) as total'))
+            ->whereYear('transaction_date', $currentMonth->year)
+            ->whereMonth('transaction_date', $currentMonth->month)
+            ->select('category', \DB::raw('sum(amount) as total'))
             ->groupBy('category')
             ->get();
 
-        // Update categories count to include both types
-        $categoriesCount = ExpenseCategory::count() + IncomeCategory::count();
+        // Get recent transactions
+        $recentTransactions = Income::select(
+                'description', 
+                'amount', 
+                'transaction_date',
+                DB::raw("'income' as type")
+            )
+            ->where('user_id', $userId)
+            ->whereYear('transaction_date', $currentMonth->year)
+            ->whereMonth('transaction_date', $currentMonth->month)
+            ->union(
+                Expense::select(
+                    'description', 
+                    'amount', 
+                    'transaction_date',
+                    DB::raw("'expense' as type")
+                )
+                ->where('user_id', $userId)
+                ->whereYear('transaction_date', $currentMonth->year)
+                ->whereMonth('transaction_date', $currentMonth->month)
+            )
+            ->orderBy('transaction_date', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = Carbon::parse($transaction->transaction_date);
+                return $transaction;
+            });
+
+        // Get AI recommendations and analysis
+        $aiRecommendations = $this->financialAnalysisService->getFinancialRecommendations(
+            $totalIncome,
+            $totalExpenses,
+            $currentBudgets,
+            $categoryExpenses
+        );
+
+        $aiAnalysis = $this->financialAnalysisService->getFinancialAnalysis(
+            $totalIncome,
+            $totalExpenses,
+            $currentBudgets,
+            $categoryExpenses,
+            $expensesByCategory
+        );
 
         return view('dashboard', compact(
-            'totalExpenses',
             'totalIncome',
-            'savings',
+            'totalExpenses',
             'totalBudget',
             'budgetCount',
-            'categoriesCount',
             'recentTransactions',
+            'incomesByCategory',
             'expensesByCategory',
-            'incomesByCategory'
+            'aiRecommendations',
+            'aiAnalysis'
         ));
     }
 }

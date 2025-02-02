@@ -37,7 +37,27 @@
     <!-- Budget Form -->
     <div class="bg-white overflow-hidden shadow-sm rounded-xl">
         <div class="p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Set Monthly Budget</h3>
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-medium text-gray-900">Set Monthly Budget</h3>
+                <div class="flex items-center space-x-3">
+                    <a href="{{ route('dashboard') }}" 
+                       class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            form="budgetForm"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-teal-700"
+                            onclick="clearInputsAfterSubmit()">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Save Budget
+                    </button>
+                </div>
+            </div>
             
             @if(session('success'))
                 <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
@@ -45,7 +65,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('budget.store') }}" method="POST">
+            <form id="budgetForm" action="{{ route('budget.store') }}" method="POST">
                 @csrf
                 <div class="space-y-6">
                     <!-- Month and Year Selection -->
@@ -97,15 +117,20 @@
                             </div>
                         @endforeach
                     </div>
-
-                    <div class="pt-4">
-                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-                            Save Budget
-                        </button>
-                    </div>
+                    <!-- Remove the bottom buttons div -->
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+function clearInputsAfterSubmit() {
+    setTimeout(() => {
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.value = '';
+        });
+    }, 100);
+}
+</script>
 @endsection
